@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+plotly
+matplotlib
+nltk
+vaderSentiment
+scikit-learn
+wordcloud
+gensim
+langdetect
+openpyxl
