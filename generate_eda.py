@@ -32,6 +32,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
+import re
 
 # NLP
 import nltk
@@ -190,10 +191,11 @@ stop_words.update(['hotel', 'room', 'stay', 'would', 'could'])
 
 def clean_text(text):
     text = str(text).lower()
-    text = text.translate(str.maketrans('', '', string.punctuation))
-    text = ''.join([i for i in text if not i.isdigit()])
+    # Use regex to keep only letters and spaces, effectively removing all punctuation/digits
+    text = re.sub(r'[^a-z\s]', ' ', text)
     tokens = word_tokenize(text)
-    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
+    # Filter for length > 2 to remove noise/punct fragments
+    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words and len(word) > 2]
     return ' '.join(tokens)
 
 df['cleaned_review'] = df['review'].apply(clean_text)

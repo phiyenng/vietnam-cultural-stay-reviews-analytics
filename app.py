@@ -14,6 +14,7 @@ import string
 from wordcloud import WordCloud
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.feature_extraction.text import CountVectorizer
+import re
 from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0
 
@@ -83,10 +84,11 @@ def load_and_preprocess():
     
     def clean_text(text):
         text = str(text).lower()
-        text = text.translate(str.maketrans('', '', string.punctuation))
-        text = ''.join([i for i in text if not i.isdigit()])
+        # Use regex to keep only letters and spaces, effectively removing all punctuation/digits
+        text = re.sub(r'[^a-z\s]', ' ', text)
         tokens = word_tokenize(text)
-        tokens = [lemmatizer.lemmatize(w) for w in tokens if w not in custom_stops]
+        # Filter for length > 2 to remove noise/punct fragments
+        tokens = [lemmatizer.lemmatize(w) for w in tokens if w not in custom_stops and len(w) > 2]
         return ' '.join(tokens)
         
     df['cleaned_review'] = df['review'].apply(clean_text)
